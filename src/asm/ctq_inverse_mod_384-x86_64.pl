@@ -101,7 +101,7 @@ ct_inverse_mod_383:
 .cfi_startproc
 #ifdef __BLST_PORTABLE__
 	testl	\$1, __blst_platform_cap(%rip)
-	jnz	ct_inverse_mod_383\$1
+	jmp	ct_inverse_mod_383\$1
 #endif
 	push	%rbp
 .cfi_push	%rbp

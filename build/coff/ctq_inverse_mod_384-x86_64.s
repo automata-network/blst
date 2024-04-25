@@ -19,7 +19,7 @@ ct_inverse_mod_383:
 	movq	%r9,%rcx
 #ifdef __BLST_PORTABLE__
 	testl	$1,__blst_platform_cap(%rip)
-	jnz	ct_inverse_mod_383$1
+	jmp	ct_inverse_mod_383$1
 #endif
 	pushq	%rbp
 
