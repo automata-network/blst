@@ -226,13 +226,13 @@ fn main() {
     if target_arch.eq("wasm32") || target_no_std {
         cc.define("SCRATCH_LIMIT", "(45 * 1024)");
     }
-    if target_env.eq("sgx") {
+    // if target_env.eq("sgx") {
         cc.flag_if_supported("-mlvi-hardening");
         cc.define("__SGX_LVI_HARDENING__", None);
         cc.define("__BLST_NO_CPUID__", None);
         cc.define("__ELF__", None);
         cc.define("SCRATCH_LIMIT", "(45 * 1024)");
-    }
+    // }
     if !cfg!(debug_assertions) {
         cc.opt_level(2);
     }
