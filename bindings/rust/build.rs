@@ -41,6 +41,9 @@ fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap();
+
+    let is_sgx = target_env.eq("sgx") || target_vendor.eq("teaclave");
 
     let target_no_std = target_os.eq("none")
         || (target_os.eq("unknown") && target_arch.eq("wasm32"))
@@ -98,7 +101,7 @@ fn main() {
         }
     }
 
-    if target_env.eq("sgx") && env::var("CC").is_err() {
+    if is_sgx && env::var("CC").is_err() {
         match std::process::Command::new("clang")
             .arg("--version")
             .output()
@@ -191,7 +194,7 @@ fn main() {
                         );
                         cc.define("__ADX__", None);
                     }
-                } else if target_env.eq("sgx") {
+                } else if is_sgx {
                     println!("Enabling ADX for Intel SGX target");
                     cc.define("__ADX__", None);
                 } else {
@@ -222,14 +225,14 @@ fn main() {
         }
         cc.define("SCRATCH_LIMIT", "(45 * 1024)");
     }
-    // if target_env.eq("sgx") {
+    if is_sgx {
         cc.flag_if_supported("-mlvi-hardening");
         cc.flag("-ffreestanding");
         cc.define("__SGX_LVI_HARDENING__", None);
         cc.define("__BLST_NO_CPUID__", None);
         cc.define("__ELF__", None);
         cc.define("SCRATCH_LIMIT", "(45 * 1024)");
-    // }
+     }
     if !cfg!(debug_assertions) {
         cc.opt_level(2);
     }
